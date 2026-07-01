@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Billing System Demo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Billing &amp; Accounting Demo</h1>
+  <pre id="output"></pre>
+  <script type="module">
+    import { Billing } from "./js/billing.js";
 
+    const out = document.getElementById("output");
+    const log = (...args) => (out.textContent += args.join(" ") + "\n");
+
+    // ── 1. Basic calculations ──
+    log("─── GST / CGST / SGST ───");
+    const amt = 1000;
+    log(`Amount:           ${Billing.formatINR(amt)}`);
+    log(`GST @18%:         ${Billing.formatINR(Billing.calcGST(amt))}`);
+    log(`CGST @9%:         ${Billing.formatINR(Billing.calcCGST(amt))}`);
+    log(`SGST @9%:         ${Billing.formatINR(Billing.calcSGST(amt))}`);
+    log("");
+
+    // ── 2. Interest ──
+    log("─── Interest ───");
+    const p = 10000, r = 8, t = 2;
+    log(`Principal:        ${Billing.formatINR(p)}`);
+    log(`Rate:             ${r}% p.a.`);
+    log(`Time:             ${t} years`);
+    log(`Simple Interest:  ${Billing.formatINR(Billing.simpleInterest(p, r, t))}`);
+    log(`Compound Interest:${Billing.formatINR(Billing.compoundInterest(p, r, t))}`);
+    log("");
+
+    // ── 3. Profit / Margin ──
+    log("─── Profit & Margin ───");
+    log(`Cost:             ${Billing.formatINR(200)}`);
+    log(`Selling:          ${Billing.formatINR(280)}`);
+    log(`Profit %:         ${Billing.calcProfitPercent(200, 280).toFixed(2)}%`);
+    log(`Margin %:         ${Billing.calcMargin(280, 200).toFixed(2)}%`);
+    log(`SP for 30% profit:${Billing.formatINR(Billing.calcSellingPrice(200, 30))}`);
+    log("");
+
+    // ── 4. Full invoice ──
+    log("─── Full Invoice Demo ───");
+    const items = [
+      { name: "Laptop",      qty: 1, price: 55000 },
+      { name: "Mouse",       qty: 2, price: 750 },
+      { name: "Keyboard",    qty: 1, price: 2500 },
+      { name: "USB Cable",   qty: 3, price: 199 },
+    ];
+    const inv = new Billing();
+    console.log(inv.generateInvoice(items, { discountPercent: 5, gstPercent: 18 }));
+    log(inv.generateInvoice(items, { discountPercent: 5, gstPercent: 18 }));
+  </script>
+</body>
+</html>
